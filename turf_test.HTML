@@ -4,10 +4,19 @@
   <meta charset="UTF-8">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/master/leaflet.css">
+  <link rel="stylesheet" href="turf_test.CSS">
+
   <title>Test de turf.js</title>
+
+  
 </head>
 <body>
-    <form action="#" method='get' id='texte'>
+    <!--  map declaration  -->
+    <div id="map" style="width:100%; height:400px;"></div>
+
+    <!-- create form -->
+    <form action="#" method="GET" id='formulaire'>
         <p>
             <label>temps de calcul maximal
                 <input id="temps" type="number" name="rechercher">
@@ -26,17 +35,19 @@
 
             </label>
         </p>
-
+        
         <p>
-            <input id = 'validation' type="submit" name="valider" value="valider">
         </p>
 
     </form>
-
-
     
-
-
+    <button id ="soumettre" onclick="valider()">soumettre</button>
+    
+    <!-- <script src="turf_test.JS"></script> -->
+    <script src='https://unpkg.com/@turf/turf@5/turf.min.js'></script>
+    <script src="http://cdn.leafletjs.com/leaflet/master/leaflet.js"></script>
     <script src="turf_test.JS"></script>
+
+
 </body>
 </html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test de turf.js</title>
+
+  
+</head>
+<body>
+    <script src='https://unpkg.com/@turf/turf@5/turf.min.js'></script>
+<script>
+    var options = {
+  bbox: [-70, 40, -60, 60]
+    };
+    var points = turf.randomPoint(100, options);
+    var voronoiPolygons = turf.voronoi(points, options);
+</script>
+</body>
+
+
+
+
