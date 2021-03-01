@@ -30,25 +30,105 @@ initMap();
     let t0 = performance.now();
     let t1 = performance.now() + 1; 
 
-    //points_renard is the array of the renard's serie choising by random function
-    let points_renard = [1 , 1.6 , 2.5 , 4 , 6.3 , 10]
-    let points_choice = points_renard[Math.floor(Math.random() * points_renard.length)];
+    //points_renard is the array of the renard's serie 
+    let points_renard = [10,16,25,40,63,100]
+    
     
     operation = document.getElementById('ope').value;
     temps = document.getElementById('temps').value;
     nombre_points = document.getElementById('nombre_points').value;
+    console.log("Me voila l'opération " + operation);
 
     //nb_boucle counts the number of loop execution
     nb_boucle=1;
 
     while((t1-t0) < temps) {
         console.log('t1-t0: '+(t1-t0));
+        
         if (operation == 'triangulation delaunay'){
-
             //Points parameter 
             let cellSide = 50;
             let options = {bbox : [2.581848140659056, 48.84129132448065 ,2.5872163116428157, 48.84296821335873]};
             let option = {units: 'miles'};
+
+            //points_choice is the array of the renard's serie choising by random function
+            let points_choice = points_renard[Math.floor(Math.random() * points_renard.length)];
+
+            // generate points into the bbox range[min_lat, min_long, max_lat, max_long] and
+            let points = turf.randomPoint(points_choice, options);
+            L.geoJson(points).addTo(map);
+
+            //Formating the style of the points 
+            let pointStyle = {
+                pointToLayer: function(feature, latlng){
+                    return L.circle(latlng);
+                },
+                style: {
+                    "color": "#ff7800",
+                    "weight": 5,
+                    "opacity": 0.65
+                }
+            }
+
+            
+            // This fonction attributes the color from the features properties 
+            function getColor(d) {
+                return d > 50 ? '#800026' :
+                    d > 30  ? '#BD0026' :
+                    d > 25  ? '#E31A1C' :
+                    d > 20  ? '#FC4E2A' :
+                    d > 15   ? '#FD8D3C' :
+                    d > 10   ? '#FEB24C' :
+                    d > 5  ? '#FED976' :
+                                '#FFEDA0';
+            }
+
+            
+            //formating the style of the triangle grids using the function getColor and others parameters
+            let crimeGridStyle = {
+                style: function style(feature) {
+                return {
+                    fillColor: getColor(feature.properties.z),
+                    weight: 2,
+                    opacity: 1,
+                    color: 'white',
+                    dashArray: '3',
+                    fillOpacity: 0.7
+                };
+            }
+            }
+
+            // create a "z" value for each point up to 50
+            points.features.forEach(function(d){
+                d.properties.z = ~~(Math.random() * 50);
+            });
+
+            //Display the points on the map
+            L.geoJson(points, pointStyle).addTo(map);
+ 
+             //TriangleGrid creation 
+            let cellWidth = 0.5;
+            let options1={units : 'kilometers'};
+            let triGrid = turf.triangleGrid(options.bbox, cellWidth, options1);
+
+            // join the values of the points to the grid
+            let count = turf.collect(triGrid, points, "z", "z")
+            console.log(count);
+
+            L.geoJson(count, crimeGridStyle).addTo(map);  
+
+
+        }   
+        else if (operation == 'diagramme de Voronoï'){
+
+            console.log("HHHHHHHHHHHHHHHH")
+            //Points parameter 
+            let cellSide = 50;
+            let options = {bbox : [2.581848140659056, 48.84129132448065 ,2.5872163116428157, 48.84296821335873]};
+            let option = {units: 'miles'};
+
+            //points_choice is the array of the renard's serie choising by random function
+            let points_choice = points_renard[Math.floor(Math.random() * points_renard.length)];
 
             // generate points into the bbox range[min_lat, min_long, max_lat, max_long] and
             let points = turf.randomPoint(points_choice, options);
@@ -102,37 +182,18 @@ initMap();
             //Display the points on the map
             L.geoJson(points, pointStyle).addTo(map);
 
-            //TriangleGrid creation 
-            let cellWidth = 0.5;
-            let options1={units : 'kilometers'};
-            let triGrid = turf.triangleGrid(options.bbox, cellWidth, options1);
+
+            //Voronoï Grid creation 
+            let Voronoi_Grid = turf.voronoi(points, options);
+            console.log(Voronoi_Grid);
 
             // join the values of the points to the grid
-            let count = turf.collect(triGrid, points, "z", "z")
+            let count = turf.collect(Voronoi_Grid, points, "z", "z")
             console.log(count);
 
-            L.geoJson(count, crimeGridStyle).addTo(map);
+            L.geoJson(Voronoi_Grid).addTo(map);
+            //L.geoJson(Voronoi_Grid).addTo(map); 
         }
-
-    
-        else if (operation == 'diagramme de voronoï'){
-    
-            /*let voronoiPolygons = turf.voronoi(points_choice, options);
-
-            let points = turf.randomPoint(100, options);
-            let voronoiPolygons = turf.voronoi(points, options);*/
-
-            
-        }
-    
-        else if (operation == 'triangulation simple'){
-    
-            // add a random property to each point between 0 and 9
-            for (var i = 0; i < points.features.length; i++) {
-            points.features[i].properties.z = ~~(Math.random() * 9);
-            }
-            var tin = turf.tin(points, 'z');
-            }
         
         //Loop incremention
         console.log('t1 before execution: '+t1)
