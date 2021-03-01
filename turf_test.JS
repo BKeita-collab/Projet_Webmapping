@@ -4,6 +4,12 @@ let soumettre = document.getElementById("soumettre");
 let operation;
 let nombre_points ; 
 let map = document.getElementById('map');
+let table_loop = document.getElementById("Loop_stats");
+let summarize_stats=document.getElementById("summarize_stats");
+let table_loop_thead_span = document.getElementById("Loop_stats_thead_span");
+let summarize_stats_thead_span=document.getElementById("summarize_stats_thead_span");
+
+
 
 //soumettre.addEventListener('click', valider()); 
 
@@ -37,14 +43,21 @@ initMap();
     operation = document.getElementById('ope').value;
     temps = document.getElementById('temps').value;
     nombre_points = document.getElementById('nombre_points').value;
-    console.log("Me voila l'opération " + operation);
+
+    //filling in the operation on the head of the table 
+    table_loop_thead_span.innerHTML = operation;
+    summarize_stats_thead_span.innerHTML = operation;
+
 
     //nb_boucle counts the number of loop execution
     nb_boucle=1;
 
+    //execution time 
+    exec_time = t1-t0;
+
     while((t1-t0) < temps) {
         console.log('t1-t0: '+(t1-t0));
-        
+        let points_choice = 0;
         if (operation == 'triangulation delaunay'){
             //Points parameter 
             let cellSide = 50;
@@ -52,7 +65,9 @@ initMap();
             let option = {units: 'miles'};
 
             //points_choice is the array of the renard's serie choising by random function
-            let points_choice = points_renard[Math.floor(Math.random() * points_renard.length)];
+            points_choice = points_renard[Math.floor(Math.random() * points_renard.length)];
+            console.log("choice "+points_choice);
+
 
             // generate points into the bbox range[min_lat, min_long, max_lat, max_long] and
             let points = turf.randomPoint(points_choice, options);
@@ -121,14 +136,13 @@ initMap();
         }   
         else if (operation == 'diagramme de Voronoï'){
 
-            console.log("HHHHHHHHHHHHHHHH")
             //Points parameter 
             let cellSide = 50;
             let options = {bbox : [2.581848140659056, 48.84129132448065 ,2.5872163116428157, 48.84296821335873]};
             let option = {units: 'miles'};
 
             //points_choice is the array of the renard's serie choising by random function
-            let points_choice = points_renard[Math.floor(Math.random() * points_renard.length)];
+            points_choice = points_renard[Math.floor(Math.random() * points_renard.length)];
 
             // generate points into the bbox range[min_lat, min_long, max_lat, max_long] and
             let points = turf.randomPoint(points_choice, options);
@@ -194,15 +208,47 @@ initMap();
             L.geoJson(Voronoi_Grid).addTo(map);
             //L.geoJson(Voronoi_Grid).addTo(map); 
         }
-        
+
+        //filling out the table loop stats row
+        let row = table_loop.insertRow();
+
+        //filling out the table loop cell 
+        let nombre_renard_choisi =  row.insertCell(0); 
+        let temps_avant_execution = row.insertCell(1); 
+        let temps_apres_execution = row.insertCell(2); 
+        let duree_execution = row.insertCell(3);
+
+            // get the random choice in points_renard into the table 
+        nombre_renard_choisi.innerHTML = points_choice;
+
         //Loop incremention
-        console.log('t1 before execution: '+t1)
-        t0=t1
-        t1 = performance.now() 
-        console.log('t1 after execution: '+t1)
+            // get t0 value into  the table
+        temps_avant_execution.innerHTML = t0;
+        
+        t0=t1;
+        t1 = performance.now();
+
+            //get t1 value into the table 
+        temps_apres_execution.innerHTML = t1;
+
+            // get the duration of the loop into the table
+        duree_execution.innerHTML = t1-t0;
+
         nb_boucle++;
+        exec_time += t1-t0
         
     }
-    console.log('nombre de boucle= '+nb_boucle);
+
+    let summarize = summarize_stats.insertRow(); 
+
+    let nb_point_entree = summarize.insertCell(0);
+    let temps_max_traitement = summarize.insertCell(1); 
+    let nb_boucle_effectuee = summarize.insertCell(2); 
+    let duree_total_exec = summarize.insertCell(3); 
+    
+    nb_point_entree.innerHTML = nombre_points;
+    temps_max_traitement.innerHTML = temps; 
+    nb_boucle_effectuee.innerHTML = nb_boucle;
+    duree_total_exec.innerHTML = exec_time;
 } 
 

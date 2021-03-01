@@ -46,6 +46,45 @@
     </form>
     
     <button id ="soumettre" onclick="valider()">soumettre</button>
+
+    
+    <!-- Create the statistic table of the loop i  -->    
+      <table id="Loop_stats">
+        <thead>
+            <tr>
+                <th colspan="4">Opération spatiale effectuée: <span id = "Loop_stats_thead_span"> </span> </th>
+            </tr>
+        </thead >
+        <tbody>
+            <tr>
+                <td>Nombre de renard choisi</td>
+                <td>Temps au debut de traitement</td>
+                <td>Temps à la fin du traitement</td>
+                <td>Durée du traitement</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Create statistic table of the operation -->
+    <table id="summarize_stats">
+        <thead>
+            <tr>
+                <th colspan="4">Opération spatiale effectuée: <span id = "summarize_stats_thead_span"></span> </th>
+            </tr>
+        </thead>
+        <tbody >
+            <tr>
+                <td>Nombre de points en entrée</td>
+                <td>Temps maximal de traitement</td>
+                <td>Nombre de boucles effectuées</td>
+                <td>Durée totale de l'opération</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+
+
     
     <!-- <script src="turf_test.JS"></script> -->
     <script src='https://unpkg.com/@turf/turf@5/turf.min.js'></script>
