@@ -4,10 +4,19 @@ let soumettre = document.getElementById("soumettre");
 let operation;
 let nombre_points ; 
 let map = document.getElementById('map');
+
+let lat_min ;
+let lat_max ;
+let lon_min ;
+let lon_max ; 
+
+
 let table_loop = document.getElementById("Loop_stats");
 let summarize_stats=document.getElementById("summarize_stats");
 let table_loop_thead_span = document.getElementById("Loop_stats_thead_span");
 let summarize_stats_thead_span=document.getElementById("summarize_stats_thead_span");
+let loop_time = document.getElementById('loop_time');
+let points_time = document.getElementById('points_time');
 
 
 
@@ -15,34 +24,36 @@ let summarize_stats_thead_span=document.getElementById("summarize_stats_thead_sp
 
 // init map 
 //let map;
- function initMap(){
-    map = L.map("map").setView([48.84117832521629, 2.587312869080921],15);
+ function initMap(long , lat){
+    map = L.map("map").setView([long, lat],15);
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',{
     attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
     }).addTo(map);
 }; 
 
 
- // call initMap()
-initMap(); 
+
 
 
 // The function valider will be use when the client fill in the form 
 // after getting the values of the client, the function will apply 
 // the appropriate spatial operation {triangle grid or voronoi diagram}
   function valider(){
-    
-    //get t0 the begining time
-    let t0 = performance.now();
-    let t1 = performance.now() + 1; 
 
     //points_renard is the array of the renard's serie 
-    let points_renard = [10,16,25,40,63,100]
+    let points_renard = [10,16,25,40,63,100];
     
     
     operation = document.getElementById('ope').value;
     temps = document.getElementById('temps').value;
     nombre_points = document.getElementById('nombre_points').value;
+
+    lat_min = document.getElementById('lat_min').valueAsNumber;
+    lat_max = document.getElementById('lat_max').valueAsNumber;
+    lon_min = document.getElementById('lon_min').valueAsNumber; 
+    lon_max = document.getElementById('lon_max').valueAsNumber; 
+
+    console.log(lat_max+lat_min +  lon_min+ lon_max);
 
     //filling in the operation on the head of the table 
     table_loop_thead_span.innerHTML = operation;
@@ -52,16 +63,38 @@ initMap();
     //nb_boucle counts the number of loop execution
     nb_boucle=1;
 
+
+    
+    // Array of graphs element
+        // Array of time 
+    array_time = Array();
+
+        // Array of time 
+    array_points = Array();
+
+        // Array of time 
+    array_loop = Array();
+
+    // Bounding Box 
+    let bb = Array();
+    bb = [lat_min, lon_min,lat_max, lon_max];
+    
+     // call initMap()
+    initMap((lon_max+lon_min)/2, (lat_min+lat_max)/2); 
+
+    //get t0 the begining time
+    let t0 = performance.now();
+    let t1 = performance.now() + 1; 
+
     //execution time 
     exec_time = t1-t0;
 
     while((t1-t0) < temps) {
-        console.log('t1-t0: '+(t1-t0));
         let points_choice = 0;
         if (operation == 'triangulation delaunay'){
             //Points parameter 
             let cellSide = 50;
-            let options = {bbox : [2.581848140659056, 48.84129132448065 ,2.5872163116428157, 48.84296821335873]};
+            let options = {bbox : bb};
             let option = {units: 'miles'};
 
             //points_choice is the array of the renard's serie choising by random function
@@ -234,6 +267,11 @@ initMap();
             // get the duration of the loop into the table
         duree_execution.innerHTML = t1-t0;
 
+        // Append the new value to the arrays 
+        array_loop.push(nb_boucle); 
+        array_points.push(points_choice); 
+        array_time.push(t1-t0);
+
         nb_boucle++;
         exec_time += t1-t0
         
@@ -250,5 +288,24 @@ initMap();
     temps_max_traitement.innerHTML = temps; 
     nb_boucle_effectuee.innerHTML = nb_boucle;
     duree_total_exec.innerHTML = exec_time;
+
+    console.log('TEMPS'+array_time); 
+    //console.log('POINTS'+array_points); 
+    //console.log('BOUCLE'+array_loop); 
+    //Plotting loop_time
+    Plotly.plot( loop_time, [{
+        x: array_time,
+        y: array_loop }], layout = {
+            title: 'loop by time',
+            showlegend: true 
+        }, {showSendToCloud:true} );
+
+    //Plotting points_time
+    Plotly.plot( points_time, [{
+        x: array_time,
+        y: array_points }], layout = {
+            title: 'Points by time',
+            showlegend: true
+        }, {showSendToCloud:true} );
 } 
 
