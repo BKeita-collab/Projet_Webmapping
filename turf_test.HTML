@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/master/leaflet.css">
+  <link rel="stylesheet" href="turf_test.CSS">
+
+  <title>Test de turf.js</title>
+
+  
+</head>
+<body>
+    <!--  map declaration  -->
+    <div id="map" style="width:100%; height:400px;"></div>
+
+    <div id='utilisateur'>
+    <!-- create form -->
+    <form action="#" method="GET" id='formulaire'>
+        <p>
+            <label>temps de calcul maximal
+                <input id="temps" type="number" name="rechercher">
+            </label>
+        </p>
+        
+        <p>
+            <label>opération à effectuer 
+                <!-- <input id = 'ope' type="text" name = 'operation'> -->
+                <select id="ope" name="operation">
+                    <option value="triangulation delaunay">Triangulation delaunay</option>
+                    <option value="diagramme de Voronoï">diagramme de Voronoï</option>
+                  </select>
+            </label>
+        </p>
+
+        <p>
+            <label>nombre de points 
+                <input id='nombre_points' type="number" name="operation" min = 10 >
+
+            </label>
+        </p>
+
+        <p>
+            <label> latitude min
+                <input id='lat_min' type=number name ="latitude_min"> 
+            </label>
+
+        </p>
+
+        <p>
+            <label> latitude max 
+                <input id='lat_max' type=number name = "latitude_max">
+            </label>
+        </p>
+
+        <p>
+            <label> longitude min
+                <input id='lon_min' type=number name ="long_min">
+            </label>
+        </p>
+
+        <p>
+            <label> longitude max
+                <input id='lon_max' type=number name = "longitude_max">
+            </label>
+        </p>
+
+
+    </form>
+    
+    <button id ="soumettre" onclick="valider()">soumettre</button>
+    </div>
+
+    
+    <!-- Create the statistic table of the loop i  -->    
+      <table id="Loop_stats">
+        <thead>
+            <tr>
+                <th colspan="4">Tableau des opérations pour l'opération: <span id = "Loop_stats_thead_span"> </span> </th>
+            </tr>
+        </thead >
+        <tbody>
+            <tr>
+                <td>Nombre de renard choisi</td>
+                <td>Temps au debut de traitement</td>
+                <td>Temps à la fin du traitement</td>
+                <td>Durée du traitement</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Create statistic table of the operation -->
+    <table id="summarize_stats">
+        <thead>
+            <tr>
+                <th colspan="5">Tableau récaptitulatif pour l'opération: <span id = "summarize_stats_thead_span"></span> </th>
+            </tr>
+        </thead>
+        <tbody >
+            <tr>
+                <td>Nombre de points en entrée</td>
+                <td>Temps maximal de traitement</td>
+                <td>Nombre de boucles effectuées</td>
+                <td>Durée totale de l'opération</td>
+                <td>Nombre total de points générés</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <!-- Create a show of variation of processing time  -->
+
+    <!-- Considering number of loop and processing time -->
+    <div id='loop_time'style="width:auto;height:250px;"></div>
+
+    <!-- Considering number of points and processing time  -->
+    <div id = points_time style="width:auto;height:250px;"></div>
+
+    
+    <!-- <script src="turf_test.JS"></script> -->
+    <script src='https://unpkg.com/@turf/turf@5/turf.min.js'></script>
+    <script src="http://cdn.leafletjs.com/leaflet/master/leaflet.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js" charset="utf-8"></script>
+    <script src="turf_test.JS"></script>
+
+
+
+</body>
+</html>
